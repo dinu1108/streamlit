@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm -f backend/database.py backend/seed_movies.py backend/seed_reviews.py)",
+      "Bash(rm -rf backend/routers)"
+    ]
+  }
+}

@@ -1,9 +1,25 @@
-"""영화별 샘플 리뷰 시드 데이터 삽입 스크립트"""
+"""영화 및 리뷰 시드 데이터 삽입 스크립트"""
 import requests
 
 API_BASE = "https://movie-review-api-g9bd.onrender.com"
 
-# 영화 제목 -> movie_id 는 실행 시 API 에서 조회
+# ── 영화 데이터 ────────────────────────────────────────────────────────────────
+
+MOVIES = [
+    {"title": "미키 17", "release_date": "2025-02-28", "director": "봉준호", "genre": "SF/스릴러", "poster_url": "https://i.namu.wiki/i/aW4LCnah5HbuoxwERx3aQ1B-bjHEOIFjhFQ6tGvMIZFBTR6XY3bVPG9PiTSrpgS26rDywd1wTV_rA94sPt2TNnVpvImg4eN_BWcX7aBKW1RK_kujWSRU60uws_9x0Qb7MqYO8wnpKU_zpgOCIP5rHg.webp"},
+    {"title": "캡틴 아메리카: 브레이브 뉴 월드", "release_date": "2025-02-12", "director": "줄리어스 오나", "genre": "액션/히어로", "poster_url": "https://i.namu.wiki/i/xnlEQPGLC2Pm-W3Yr9Y2Xc9lc41eo2LN9Cc1znw41J8ac2kJuf9x6SlVd8QNAs4T-N8QAIdXNS2tvXL0Ehj1lfgd9fjGPPbFYLTkZHhA7cZedpaisafXynBB9Wq_CUEfe2G274CcZKA5y4nCNqBz9A.webp"},
+    {"title": "마인크래프트 무비", "release_date": "2025-04-02", "director": "재러드 헤스", "genre": "어드벤처/코미디", "poster_url": "https://i.namu.wiki/i/1heZfdOwNPlFyDFy4BzpZsiJqOMJxpBg_NuM7C2YD8zFS-n1Kf6qPnIndve1QcxXGbgFGbvfv03KKogFfiAu696w77Xq7rCrTTtA_CHdHTac7BIT-tbmF_NwsDm87rthwWNl6lOuxreuBArHk_xxBA.webp"},
+    {"title": "미션 임파서블: 파이널 레코닝", "release_date": "2025-05-21", "director": "크리스토퍼 맥쿼리", "genre": "액션/스파이", "poster_url": "https://i.namu.wiki/i/V66b2PpkgziEPK9vynyNhzCG7pv4GCcfR5FBXbUPBH36wnvFw9xAfOBtqOxpAI1TDuY4YGDMxUqDK2jK5dNVt89FA-zUc3q2BcKbRf5StG00ffBEFmLoJY8X3-RzOQ5qotSvrVKzT9V1UFskAb6Bcw.webp"},
+    {"title": "쥬라기 월드: 리버스", "release_date": "2025-07-02", "director": "가레스 에드워즈", "genre": "SF/어드벤처", "poster_url": "https://i.namu.wiki/i/APWZplQ4rxNIrqzIdPa-mwcD3HZAt4CZ4tqWcGuzrc8HiNISmt0srCu7z2hHkvKSAoG383IfnKaggvghytqy7BXg51fAGkCYvbW67NoxHwVmKany4M89cRGeg6RrT2m5vR2y98Pa6lFhIP_60G7aBw.webp"},
+    {"title": "썬더볼츠", "release_date": "2025-04-30", "director": "제이크 슈라이어", "genre": "액션/히어로", "poster_url": "https://i.namu.wiki/i/OfX4zfJNfmOfCIAi-v_CFfPulqz8i4bBpq2lfUY0RrmACkBsbFb4U5HzKde9MmAMa2XC0nKsoEl6J8ttYfxI8gJ3HOzulVhWZMU8e91NDS8E_PBZycomkiCmowGkQxY4IOCrAEfm0oz_EBw.webp"},
+    {"title": "하울링", "release_date": "2025-01-22", "director": "류승완", "genre": "액션/범죄", "poster_url": None},
+    {"title": "노킹 온 헤븐스 도어", "release_date": "2025-03-19", "director": "이정범", "genre": "드라마/범죄", "poster_url": "https://i.namu.wiki/i/ZV-7j0E0yvNq2UQq7JyHPIu-4VNabSPVVDm3_l0vqAPeK5obcIL2wKN2r_qIWlw4wctjo4MWp2KdYOkoT9G3zkWdQrB3Rj72D6YnWlA217iEFeVxTpD8jetCFVFjJ7awZcXuPMoJZtgVoHtzzq-nPA.webp"},
+    {"title": "F1", "release_date": "2025-06-25", "director": "조셉 코신스키", "genre": "액션/스포츠", "poster_url": "https://i.namu.wiki/i/Bl6gg915y5g2zoMBf3QfoOcv7ZnsBAwgY_Gapq8CVDz8wTqwW90EfmXsGUW-p8K9GrsNJMUhoGZgiNddpU6iN2HGTE0fB0IVlURT7VXbZKZYYEJzSGF7n4J-bhtZ-_qmWsrWVFLtuQXicFAKHFkSyw.webp"},
+    {"title": "스파이더맨: 브랜드 뉴 데이", "release_date": "2025-07-23", "director": "데스틴 다니엘 크레튼", "genre": "액션/히어로", "poster_url": "https://i.namu.wiki/i/KRVW78ht5H8elbMeR7dfKfh1h_F9EGehGtxyZ2cGSQK5BQCdVl9Kk5ezwvNLfb4RGwLWIN6K211ZoRJlfeuIH14BmXPbuMPtMatb7DVyGPrFm0Fr7iljis4X2si8Gpw2uGHenwXMVAAMG4TEKWi-Hg.webp"},
+]
+
+# ── 리뷰 데이터 ────────────────────────────────────────────────────────────────
+
 REVIEWS_BY_TITLE = {
     "미키 17": [
         {"author": "김민준", "content": "봉준호 감독 특유의 연출이 살아있는 작품. 로버트 패틴슨의 연기가 압권이었습니다."},
@@ -89,18 +105,6 @@ REVIEWS_BY_TITLE = {
         {"author": "한수민", "content": "시원하고 통쾌한 액션으로 스트레스가 확 풀렸어요. 올해 한국 영화 최고작!"},
         {"author": "오태준", "content": "배우들의 실제 훈련이 느껴지는 리얼한 액션. 한국 영화 파이팅!"},
     ],
-    "F1": [
-        {"author": "김동우", "content": "F1 레이싱의 스피드와 스릴을 완벽하게 담아낸 영화. 아이맥스로 보니 진짜 레이스에 탄 것 같았어요."},
-        {"author": "이지은", "content": "브래드 피트의 노련한 연기와 실제 F1 레이스 영상의 조합이 완벽했습니다."},
-        {"author": "박준서", "content": "F1을 잘 모르는 분도 충분히 즐길 수 있어요. 레이싱씬의 박진감이 정말 대단합니다."},
-        {"author": "최아름", "content": "시각적으로 정말 아름다운 영화. 레이싱 씬은 현재까지 나온 영화 중 최고 수준이에요."},
-        {"author": "정재훈", "content": "스토리가 다소 클리셰적이지만 레이싱 장면들이 워낙 훌륭해서 충분히 보람 있었습니다."},
-        {"author": "강예림", "content": "F1 팬이라면 무조건 봐야 하는 영화. 실제 그랑프리 레이스 현장 촬영이 생생합니다."},
-        {"author": "윤상혁", "content": "브래드 피트가 노장 레이서를 너무 잘 소화했어요. 감동과 스릴이 함께한 작품."},
-        {"author": "임지현", "content": "레이싱 영화 중 역대 최고라고 생각합니다. 음향만으로도 이미 충분한 경험이에요."},
-        {"author": "한승호", "content": "러닝타임이 좀 길고 스토리는 평범하지만 레이싱 씬만으로도 극장 관람 가치는 충분합니다."},
-        {"author": "오나경", "content": "몰입감이 엄청난 영화. 마치 내가 레이서가 된 것 같은 느낌이었어요. 강력 추천!"},
-    ],
     "노킹 온 헤븐스 도어": [
         {"author": "김하준", "content": "이정범 감독의 연출이 탄탄하고 배우들의 연기가 모두 훌륭했어요."},
         {"author": "이채원", "content": "예상을 뛰어넘는 반전과 감동이 있는 작품. 결말에서 눈물이 났습니다."},
@@ -112,6 +116,18 @@ REVIEWS_BY_TITLE = {
         {"author": "임재욱", "content": "배우들의 케미가 완벽합니다. 함께 보는 관객들도 몰입해서 조용했던 게 인상적이었어요."},
         {"author": "한예솔", "content": "시나리오가 정말 잘 짜여진 영화. 두 번 봐도 새로운 재미를 발견할 수 있을 것 같습니다."},
         {"author": "오민재", "content": "기대 이상으로 완성도 높은 한국 범죄 드라마. 강력하게 추천합니다!"},
+    ],
+    "F1": [
+        {"author": "김동우", "content": "F1 레이싱의 스피드와 스릴을 완벽하게 담아낸 영화. 아이맥스로 보니 진짜 레이스에 탄 것 같았어요."},
+        {"author": "이지은", "content": "브래드 피트의 노련한 연기와 실제 F1 레이스 영상의 조합이 완벽했습니다."},
+        {"author": "박준서", "content": "F1을 잘 모르는 분도 충분히 즐길 수 있어요. 레이싱씬의 박진감이 정말 대단합니다."},
+        {"author": "최아름", "content": "시각적으로 정말 아름다운 영화. 레이싱 씬은 현재까지 나온 영화 중 최고 수준이에요."},
+        {"author": "정재훈", "content": "스토리가 다소 클리셰적이지만 레이싱 장면들이 워낙 훌륭해서 충분히 보람 있었습니다."},
+        {"author": "강예림", "content": "F1 팬이라면 무조건 봐야 하는 영화. 실제 그랑프리 레이스 현장 촬영이 생생합니다."},
+        {"author": "윤상혁", "content": "브래드 피트가 노장 레이서를 너무 잘 소화했어요. 감동과 스릴이 함께한 작품."},
+        {"author": "임지현", "content": "레이싱 영화 중 역대 최고라고 생각합니다. 음향만으로도 이미 충분한 경험이에요."},
+        {"author": "한승호", "content": "러닝타임이 좀 길고 스토리는 평범하지만 레이싱 씬만으로도 극장 관람 가치는 충분합니다."},
+        {"author": "오나경", "content": "몰입감이 엄청난 영화. 마치 내가 레이서가 된 것 같은 느낌이었어요. 강력 추천!"},
     ],
     "스파이더맨: 브랜드 뉴 데이": [
         {"author": "김지원", "content": "MCU 스파이더맨 시리즈의 새로운 출발. 신선하고 감동적인 스파이더맨 이야기였습니다."},
@@ -127,51 +143,58 @@ REVIEWS_BY_TITLE = {
     ],
 }
 
+# ── 실행 ───────────────────────────────────────────────────────────────────────
 
-def get_movie_map() -> dict:
-    try:
-        res = requests.get(f"{API_BASE}/movies/", timeout=60)
-        res.raise_for_status()
-        return {m["title"]: m["id"] for m in res.json()}
-    except Exception as e:
-        print(f"영화 목록 조회 실패: {e}")
-        return {}
+def seed_movies() -> dict:
+    print("영화 데이터 삽입 시작...\n")
+    success = 0
+    movie_map = {}
+    for movie in MOVIES:
+        try:
+            res = requests.post(f"{API_BASE}/movies/", json=movie, timeout=60)
+            res.raise_for_status()
+            data = res.json()
+            movie_map[data["title"]] = data["id"]
+            print(f"[OK] [{data['id']}] {data['title']}")
+            success += 1
+        except Exception as e:
+            print(f"[FAIL] {movie['title']}: {e}")
+    print(f"\n완료: {success}/{len(MOVIES)}개 삽입\n")
+    return movie_map
 
 
-def seed():
+def seed_reviews(movie_map: dict):
     print("리뷰 데이터 삽입 시작...\n")
-    movie_map = get_movie_map()
-
     if not movie_map:
-        print("영화가 없습니다. 먼저 seed_movies.py 를 실행해주세요.")
-        return
+        try:
+            res = requests.get(f"{API_BASE}/movies/", timeout=60)
+            res.raise_for_status()
+            movie_map = {m["title"]: m["id"] for m in res.json()}
+        except Exception as e:
+            print(f"영화 목록 조회 실패: {e}")
+            return
 
-    total_ok = 0
-    total_fail = 0
-
+    total_ok, total_fail = 0, 0
     for title, reviews in REVIEWS_BY_TITLE.items():
         movie_id = movie_map.get(title)
         if not movie_id:
             print(f"[SKIP] '{title}' 영화를 찾을 수 없습니다.")
             continue
-
-        print(f"\n[{title}] (id={movie_id}) 리뷰 {len(reviews)}개 삽입 중...")
+        print(f"[{title}] 리뷰 {len(reviews)}개 삽입 중...")
         for review in reviews:
             try:
-                payload = {"movie_id": movie_id, **review}
-                res = requests.post(f"{API_BASE}/reviews/", json=payload, timeout=120)
+                res = requests.post(f"{API_BASE}/reviews/", json={"movie_id": movie_id, **review}, timeout=120)
                 res.raise_for_status()
                 data = res.json()
-                print(f"  [OK] {data['author']} | {data['sentiment_label']} ({data['sentiment_score']:.1f})")
+                print(f"  [OK] {data['author']} | {data['sentiment_label']} ({data['sentiment_score']:.2f})")
                 total_ok += 1
             except Exception as e:
                 print(f"  [FAIL] {review['author']}: {e}")
-                if hasattr(e, 'response') and e.response is not None:
-                    print(f"         응답: {e.response.text}")
                 total_fail += 1
 
     print(f"\n완료: 성공 {total_ok}개 / 실패 {total_fail}개")
 
 
 if __name__ == "__main__":
-    seed()
+    movie_map = seed_movies()
+    seed_reviews(movie_map)

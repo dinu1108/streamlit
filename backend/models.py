@@ -1,8 +1,31 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Date
-from sqlalchemy.orm import relationship
+import os
+from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, ForeignKey, Date
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, relationship
 from datetime import datetime
-from database import Base
 
+# ── DB 연결 설정 ───────────────────────────────────────────────────────────────
+
+DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///./movies.db")
+
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
+engine = create_engine(DATABASE_URL, connect_args=connect_args, pool_pre_ping=True)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+# ── 모델 정의 ──────────────────────────────────────────────────────────────────
 
 class Movie(Base):
     __tablename__ = "movies"
