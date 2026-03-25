@@ -8,7 +8,9 @@ POSITIVE_WORDS = [
 NEGATIVE_WORDS = [
     "나쁘", "실망", "아쉽", "지루", "평범", "실패", "최악", "별로",
     "단조", "약하", "부족", "심심", "복잡", "갑작스", "늘어지", "예상 가능",
-    "기억에 남는 장면도 없", "특별히", "그냥 그런",
+    "기억에 남는 장면도 없", "그냥 그런", "노잼", "재미없", "별로",
+    "졸리", "후회", "돈 아깝", "시간 낭비", "구리", "별점 1", "최악",
+    "형편없", "억지", "어색", "지겹", "식상", "클리셰",
 ]
 
 
@@ -17,7 +19,7 @@ def _keyword_score(text: str) -> float:
     neg = sum(1 for w in NEGATIVE_WORDS if w in text)
     total = pos + neg
     if total == 0:
-        return 0.5
+        return 0.4  # 매칭 없으면 약한 부정으로 처리
     return pos / total
 
 
