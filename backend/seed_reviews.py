@@ -1,7 +1,7 @@
 """영화별 샘플 리뷰 시드 데이터 삽입 스크립트"""
 import requests
 
-API_BASE = "http://localhost:8000"
+API_BASE = "https://movie-review-api-g9bd.onrender.com"
 
 # 영화 제목 -> movie_id 는 실행 시 API 에서 조회
 REVIEWS_BY_TITLE = {
@@ -130,7 +130,7 @@ REVIEWS_BY_TITLE = {
 
 def get_movie_map() -> dict:
     try:
-        res = requests.get(f"{API_BASE}/movies/", timeout=10)
+        res = requests.get(f"{API_BASE}/movies/", timeout=60)
         res.raise_for_status()
         return {m["title"]: m["id"] for m in res.json()}
     except Exception as e:
@@ -159,13 +159,15 @@ def seed():
         for review in reviews:
             try:
                 payload = {"movie_id": movie_id, **review}
-                res = requests.post(f"{API_BASE}/reviews/", json=payload, timeout=30)
+                res = requests.post(f"{API_BASE}/reviews/", json=payload, timeout=120)
                 res.raise_for_status()
                 data = res.json()
                 print(f"  [OK] {data['author']} | {data['sentiment_label']} ({data['sentiment_score']:.1f})")
                 total_ok += 1
             except Exception as e:
                 print(f"  [FAIL] {review['author']}: {e}")
+                if hasattr(e, 'response') and e.response is not None:
+                    print(f"         응답: {e.response.text}")
                 total_fail += 1
 
     print(f"\n완료: 성공 {total_ok}개 / 실패 {total_fail}개")

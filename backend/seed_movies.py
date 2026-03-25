@@ -1,7 +1,7 @@
 """2025년 인기 영화 시드 데이터 삽입 스크립트"""
 import requests
 
-API_BASE = "http://localhost:8000"
+API_BASE = "https://movie-review-api-g9bd.onrender.com"
 
 MOVIES = [
     {
@@ -82,7 +82,7 @@ def seed():
     success = 0
     for movie in MOVIES:
         try:
-            res = requests.post(f"{API_BASE}/movies/", json=movie, timeout=10)
+            res = requests.post(f"{API_BASE}/movies/", json=movie, timeout=60)
             res.raise_for_status()
             data = res.json()
             print(f"[OK] [{data['id']}] {data['title']} ({data['release_date']})")

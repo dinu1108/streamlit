@@ -1,0 +1,155 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1774412337084,
+  "projectRoot": "C:\\Users\\User\\Desktop\\미션18_4팀_문진우",
+  "techStack": {
+    "languages": [],
+    "frameworks": [],
+    "packageManager": null,
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [],
+    "gitBranches": null
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "backend": {
+      "path": "backend",
+      "purpose": null,
+      "fileCount": 12,
+      "lastAccessed": 1774412337048,
+      "keyFiles": [
+        "database.py",
+        "main.py",
+        "models.py",
+        "movies.db",
+        "Procfile"
+      ]
+    },
+    "frontend": {
+      "path": "frontend",
+      "purpose": null,
+      "fileCount": 2,
+      "lastAccessed": 1774412337049,
+      "keyFiles": [
+        "app.py",
+        "requirements.txt"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "backend\\sentiment.py",
+      "accessCount": 12,
+      "lastAccessed": 1774424288795,
+      "type": "file"
+    },
+    {
+      "path": "render.yaml",
+      "accessCount": 9,
+      "lastAccessed": 1774420014812,
+      "type": "file"
+    },
+    {
+      "path": "backend\\seed_reviews.py",
+      "accessCount": 5,
+      "lastAccessed": 1774422553380,
+      "type": "file"
+    },
+    {
+      "path": "frontend\\app.py",
+      "accessCount": 5,
+      "lastAccessed": 1774425864313,
+      "type": "file"
+    },
+    {
+      "path": "backend\\database.py",
+      "accessCount": 4,
+      "lastAccessed": 1774420056114,
+      "type": "file"
+    },
+    {
+      "path": "backend\\requirements.txt",
+      "accessCount": 3,
+      "lastAccessed": 1774415046971,
+      "type": "file"
+    },
+    {
+      "path": "backend\\main.py",
+      "accessCount": 3,
+      "lastAccessed": 1774419994528,
+      "type": "file"
+    },
+    {
+      "path": "backend\\seed_movies.py",
+      "accessCount": 3,
+      "lastAccessed": 1774422150456,
+      "type": "file"
+    },
+    {
+      "path": "frontend",
+      "accessCount": 2,
+      "lastAccessed": 1774417051305,
+      "type": "directory"
+    },
+    {
+      "path": "frontend\\.streamlit\\secrets.toml",
+      "accessCount": 2,
+      "lastAccessed": 1774417059632,
+      "type": "file"
+    },
+    {
+      "path": "backend\\routers\\reviews.py",
+      "accessCount": 2,
+      "lastAccessed": 1774420006871,
+      "type": "file"
+    },
+    {
+      "path": "backend",
+      "accessCount": 1,
+      "lastAccessed": 1774414856649,
+      "type": "directory"
+    },
+    {
+      "path": "",
+      "accessCount": 1,
+      "lastAccessed": 1774417211597,
+      "type": "directory"
+    },
+    {
+      "path": "backend\\models.py",
+      "accessCount": 1,
+      "lastAccessed": 1774420006596,
+      "type": "file"
+    },
+    {
+      "path": "보고서_내용.md",
+      "accessCount": 1,
+      "lastAccessed": 1774426220739,
+      "type": "file"
+    },
+    {
+      "path": "보고서.html",
+      "accessCount": 1,
+      "lastAccessed": 1774426320230,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

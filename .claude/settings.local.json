@@ -4,7 +4,9 @@
       "Bash(python seed_movies.py)",
       "WebFetch(domain:namu.wiki)",
       "WebSearch",
-      "Bash(python -c \":*)"
+      "Bash(python -c \":*)",
+      "Bash(rm -f backend/movies.db backend/railway.toml backend/Procfile 보고서_내용.md)",
+      "Bash(rm -rf backend/__pycache__ backend/routers/__pycache__)"
     ]
   }
 }
