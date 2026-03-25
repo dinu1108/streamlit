@@ -1,7 +1,7 @@
 import os
 import requests
 
-MODEL_URL = "https://api-inference.huggingface.co/models/snunlp/KR-FinBert-SC"
+MODEL_URL = "https://router.huggingface.co/hf-inference/models/snunlp/KR-FinBert-SC"
 LABEL_MAP = {"LABEL_0": "negative", "LABEL_1": "positive"}
 
 
