@@ -1,60 +1,39 @@
-import torch
-from transformers import AutoTokenizer
-from optimum.onnxruntime import ORTModelForSequenceClassification
+import os
+import requests
 
-MODEL_NAME = "snunlp/KR-FinBert-SC"
-LABEL_MAP = {0: "negative", 1: "positive"}
+MODEL_URL = "https://api-inference.huggingface.co/models/snunlp/KR-FinBert-SC"
+LABEL_MAP = {"LABEL_0": "negative", "LABEL_1": "positive"}
+
+
+def _get_headers() -> dict:
+    token = os.environ.get("HF_API_TOKEN", "")
+    return {"Authorization": f"Bearer {token}"} if token else {}
+
+
+def get_analyzer():
+    return SentimentAnalyzer()
 
 
 class SentimentAnalyzer:
-    """싱글톤 패턴 + ONNX Runtime으로 경량화된 감성 분석기.
-
-    기존 동적 양자화(INT8) 대비:
-    - 추론 속도 2~5배 향상 (PyTorch 런타임 오버헤드 제거)
-    - PyTorch를 추론 엔진 대신 ONNX Runtime 사용
-    - export=True: 최초 실행 시 자동 ONNX 변환 후 캐시
-    """
-
-    _instance = None
-
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-            cls._instance._initialized = False
-        return cls._instance
-
-    def __init__(self):
-        if self._initialized:
-            return
-        self._load_model()
-        self._initialized = True
-
-    def _load_model(self):
-        self.tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-        self.model = ORTModelForSequenceClassification.from_pretrained(
-            MODEL_NAME, export=True
-        )
-
     def analyze(self, text: str) -> dict:
-        inputs = self.tokenizer(
-            text,
-            return_tensors="pt",
-            truncation=True,
-            max_length=512,
-            padding=True,
-        )
+        try:
+            response = requests.post(
+                MODEL_URL,
+                headers=_get_headers(),
+                json={"inputs": text},
+                timeout=30,
+            )
+            response.raise_for_status()
+            results = response.json()
 
-        outputs = self.model(**inputs)
-        probs = torch.softmax(outputs.logits, dim=-1)
-        predicted_class = int(probs.argmax().item())
-        label = LABEL_MAP.get(predicted_class, "negative")
+            if isinstance(results, list) and results:
+                items = results[0] if isinstance(results[0], list) else results
+                scores = {item["label"]: item["score"] for item in items}
+                positive_score = scores.get("LABEL_1", 0.0)
+                predicted_label = "positive" if positive_score >= 0.5 else "negative"
+                return {"label": predicted_label, "score": positive_score}
 
-        # 긍정 클래스 확률(0.0~1.0)을 그대로 score로 사용
-        # → 별점이 1점/5점 극단값이 아닌 연속적인 값으로 표시됨
-        positive_prob = float(probs[0][1].item())
+        except Exception as e:
+            raise RuntimeError(f"HuggingFace API 호출 실패: {e}")
 
-        return {"label": label, "score": positive_prob}
-
-
-def get_analyzer() -> SentimentAnalyzer:
-    return SentimentAnalyzer()
+        return {"label": "negative", "score": 0.0}

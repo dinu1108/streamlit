@@ -1,23 +1,12 @@
-from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from database import engine, Base
 from routers import movies, reviews
-from sentiment import get_analyzer
 
 Base.metadata.create_all(bind=engine)
 
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # 서버 시작 시 모델 프리로드 (첫 요청 타임아웃 방지)
-    get_analyzer()
-    yield
-
-
 app = FastAPI(
-    lifespan=lifespan,
     title="Movie Review API",
     description="""
 ## 영화 리뷰 및 감성 분석 API
