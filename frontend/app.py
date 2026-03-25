@@ -5,10 +5,7 @@ from datetime import date
 
 # ── 설정 ──────────────────────────────────────────────────────────────────────
 # 우선순위: 환경변수(Render) → Streamlit secrets → 로컬 기본값
-API_BASE = (
-    os.environ.get("API_BASE_URL")
-    or st.secrets.get("API_BASE_URL", "http://localhost:8000")
-)
+API_BASE = os.environ.get("API_BASE_URL", "https://movie-review-api-g9bd.onrender.com")
 
 st.set_page_config(
     page_title="🎬 영화 리뷰 서비스",
