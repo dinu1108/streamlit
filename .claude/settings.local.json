@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python seed_movies.py)",
+      "WebFetch(domain:namu.wiki)",
+      "WebSearch",
+      "Bash(python -c \":*)"
+    ]
+  }
+}
