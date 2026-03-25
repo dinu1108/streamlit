@@ -1,8 +1,8 @@
 import os
 import requests
 
-MODEL_URL = "https://api-inference.huggingface.co/models/snunlp/KR-FinBert-SC"
-LABEL_MAP = {"LABEL_0": "negative", "LABEL_1": "positive"}
+MODEL_URL = "https://api-inference.huggingface.co/models/lxyuan/distilbert-base-multilingual-cased-sentiments-student"
+LABEL_MAP = {"positive": "positive", "negative": "negative", "neutral": "negative"}
 
 
 def _get_headers() -> dict:
@@ -29,7 +29,7 @@ class SentimentAnalyzer:
             if isinstance(results, list) and results:
                 items = results[0] if isinstance(results[0], list) else results
                 scores = {item["label"]: item["score"] for item in items}
-                positive_score = scores.get("LABEL_1", 0.0)
+                positive_score = scores.get("positive", 0.0)
                 predicted_label = "positive" if positive_score >= 0.5 else "negative"
                 return {"label": predicted_label, "score": positive_score}
 
