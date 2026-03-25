@@ -1,13 +1,24 @@
-import os
-import requests
+POSITIVE_WORDS = [
+    "좋", "훌륭", "최고", "재미", "추천", "감동", "완벽", "만족", "기대",
+    "멋", "대단", "신선", "박력", "압권", "완성도", "탄탄", "즐거", "행복",
+    "최애", "걸작", "수작", "경이", "통쾌", "생생", "웅장", "스릴", "박진",
+    "매력", "훌륭", "몰입", "완벽", "아름", "감탄", "뛰어", "인상",
+]
 
-MODEL_URL = "https://api-inference.huggingface.co/models/lxyuan/distilbert-base-multilingual-cased-sentiments-student"
-LABEL_MAP = {"positive": "positive", "negative": "negative", "neutral": "negative"}
+NEGATIVE_WORDS = [
+    "나쁘", "실망", "아쉽", "지루", "평범", "실패", "최악", "별로",
+    "단조", "약하", "부족", "심심", "복잡", "갑작스", "늘어지", "예상 가능",
+    "기억에 남는 장면도 없", "특별히", "그냥 그런",
+]
 
 
-def _get_headers() -> dict:
-    token = os.environ.get("HF_API_TOKEN", "")
-    return {"Authorization": f"Bearer {token}"} if token else {}
+def _keyword_score(text: str) -> float:
+    pos = sum(1 for w in POSITIVE_WORDS if w in text)
+    neg = sum(1 for w in NEGATIVE_WORDS if w in text)
+    total = pos + neg
+    if total == 0:
+        return 0.5
+    return pos / total
 
 
 def get_analyzer():
@@ -16,24 +27,6 @@ def get_analyzer():
 
 class SentimentAnalyzer:
     def analyze(self, text: str) -> dict:
-        try:
-            response = requests.post(
-                MODEL_URL,
-                headers=_get_headers(),
-                json={"inputs": text},
-                timeout=30,
-            )
-            response.raise_for_status()
-            results = response.json()
-
-            if isinstance(results, list) and results:
-                items = results[0] if isinstance(results[0], list) else results
-                scores = {item["label"]: item["score"] for item in items}
-                positive_score = scores.get("positive", 0.0)
-                predicted_label = "positive" if positive_score >= 0.5 else "negative"
-                return {"label": predicted_label, "score": positive_score}
-
-        except Exception as e:
-            raise RuntimeError(f"HuggingFace API 호출 실패: {e}")
-
-        return {"label": "negative", "score": 0.0}
+        score = _keyword_score(text)
+        label = "positive" if score >= 0.5 else "negative"
+        return {"label": label, "score": round(score, 4)}
